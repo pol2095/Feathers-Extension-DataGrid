@@ -1,24 +1,48 @@
+/*
+Copyright 2016 pol2095. All Rights Reserved.
+
+This program is free software. You can redistribute and/or modify it in
+accordance with the terms of the accompanying license agreement.
+*/
 package feathers.extensions.dataGrid
 {
 	import feathers.controls.LayoutGroup;
 	import starling.events.EnterFrameEvent;
-	import 	feathers.layout.HorizontalLayout;
+	import feathers.layout.HorizontalLayout;
  
     public class Row extends LayoutGroup
     {
+		/**
+		 * @private
+		 */
 		public var gridLines:DataGridLines;
+		/**
+		 * The index position in the datagrid.
+		 */
         public var index:int;
+		/**
+		 * Indicates whether the item is selected.
+		 */
 		public var isSelected:Boolean;
+		/**
+		 * Indicates whether the datagrid dataProvider item corresponding to this item renderer is being changing.
+		 */
 		protected var isChanging:Boolean;
 		
 		private var countEnterFrame:int;
 		
+		/**
+		 * The datagrid dataProvider item corresponding to this item renderer.
+		 */
 		public function get data():Object
 		{
 			return owner.dataProvider.getItemAt(index);
 		}
 		
 		private var _owner:DataGrid;
+		/**
+		 * The datagrid that contains this item renderer.
+		 */
 		public function get owner():DataGrid
 		{
 			return _owner;
@@ -35,6 +59,17 @@ package feathers.extensions.dataGrid
 			super();
         }
 		
+		/**
+		 * Dispatched after the datagrid dataProvider item corresponding to this item renderer has changed.
+		 *
+		 * <listing version="3.0">
+		 * override public function dataGridChangeHandler():void
+		 * {
+		 *   super.dataGridChangeHandler(); //never forget to add this!
+		 *   
+		 *   yourControl = this.data.key; //your code here
+		 * }</listing>
+		 */
 		public function dataGridChangeHandler():void
         {
 			isChanging = true;
@@ -44,7 +79,21 @@ package feathers.extensions.dataGrid
 				countEnterFrame++;
 			}
 		}
-		
+		/**
+		 * Allows to change the item datagrid dataProvider corresponding to this item renderer and dispatch a <code>RowChangeEvent</code> on the datagrid corresponding to this item renderer.
+		 *
+		 * <listing version="3.0">
+		 * override protected function rowChangeHandler():void
+		 * {
+		 *   if(isChanging) return; //never forget to add this!
+		 *   
+		 *   this.data.key = yourControl; //your code here
+		 * 
+		 *   super.rowChangeHandler(); //never forget to add this!
+		 * }</listing>
+		 *
+		 * @see feathers.extensions.dataGrid.events.RowChangeEvent
+		 */
 		protected function rowChangeHandler():void
         {
 			owner.rowChange(index);

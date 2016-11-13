@@ -29,7 +29,7 @@ package feathers.extensions.dataGrid
 	 */
 	[Event(name="change", type="feathers.extensions.dataGrid.events.RowChangeEvent")]
  
-	public class DataGrid extends ScrollContainer
+	public class DataGrid extends LayoutGroup
 	{
 		/**
 		 * the size of the datagrid lines in pixels
@@ -85,6 +85,8 @@ package feathers.extensions.dataGrid
 			this.addEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
 			header.layout = new HorizontalLayout();
 			this.addChild(header);
+			this.scrollContainer.layout = new VerticalLayout();
+			this.addChild(this.scrollContainer);
 		}
 		
 		private function addedToStageHandler(event:Event):void
@@ -96,6 +98,10 @@ package feathers.extensions.dataGrid
 		 * The header of the datagrid.
 		 */		
 		public var header:LayoutGroup = new LayoutGroup();
+		/**
+		 * The scroller of the datagrid.
+		 */	
+		public var scrollContainer:ScrollContainer = new ScrollContainer();
 		private var cellsAlign:Boolean;
 				
 		private function requestedRowCountDefault():void
@@ -109,6 +115,7 @@ package feathers.extensions.dataGrid
 			}
 			
 			var itemRenderer:Object = new ItemRenderer();
+			itemRenderer.owner = this;
 			itemRenderer.validate();
 			itemRendererHeight = itemRenderer.height;
 			itemRenderer = null;
@@ -121,20 +128,20 @@ package feathers.extensions.dataGrid
 		 */
 		public function scrollToIndex(index:int):void
 		{
-			if(this.viewPort.height > this.height)
+			if(this.scrollContainer.viewPort.height > this.scrollContainer.height)
 			{
 				var item:Object = this.getItemAt(index);
-				if(item.height > this.height) //tab width > scroller width
+				if(item.height > this.scrollContainer.height) //tab width > scroller width
 				{
-					this.verticalScrollPosition = item.y; //tab begin
+					this.scrollContainer.verticalScrollPosition = item.parent.y; //tab begin
 				}
-				else if(item.y < this.verticalScrollPosition) //tab begin < scroller begin
+				else if(item.parent.y < this.scrollContainer.verticalScrollPosition) //tab begin < scroller begin
 				{
-					this.verticalScrollPosition = item.y; //tab begin
+					this.scrollContainer.verticalScrollPosition = item.parent.y; //tab begin
 				}
-				else if(item.y + item.height > this.verticalScrollPosition + this.height) //tab end > scroller end
+				else if(item.parent.y + item.height > this.scrollContainer.verticalScrollPosition + this.scrollContainer.height) //tab end > scroller end
 				{
-					this.verticalScrollPosition = item.y + item.height - this.height; //tab end - scroller width
+					this.scrollContainer.verticalScrollPosition = item.parent.y + item.height - this.scrollContainer.height; //tab end - scroller width
 				}
 			}
 		}
@@ -279,14 +286,14 @@ package feathers.extensions.dataGrid
 
 			//reset the scroll position because this is a drastic change and
 			//the data is probably completely different
-			this.horizontalScrollPosition = 0;
-			this.verticalScrollPosition = 0;
+			this.scrollContainer.horizontalScrollPosition = 0;
+			this.scrollContainer.verticalScrollPosition = 0;
 
 			//clear the selection for the same reason
 			this._selectedIndex = -1;
 			this._selectedIndices = new <int>[];
 
-			if(this.numChildren >= 2) this.removeChildren(1, this.numChildren - 1, true);
+			this.scrollContainer.removeChildren();
 			for(var i:int = 0; i<this._dataProvider.length; i++) addItem(i);
 		}
 		
@@ -326,6 +333,7 @@ package feathers.extensions.dataGrid
 			else
 			{
 				updateIndices();
+				_selectedIndex = selectedIndices[ selectedIndices.length - 1];
 			}
 		}
 		private function updateIndices():void
@@ -339,7 +347,7 @@ package feathers.extensions.dataGrid
 		 */
 		public function dataProvider_changeHandler(event:Event):void
 		{
-			
+			//
 		}
 
 		/**
@@ -347,14 +355,8 @@ package feathers.extensions.dataGrid
 		 */
 		public function dataProvider_resetHandler(event:Event):void
 		{
-			for(var i:int = this.numChildren - 1; i >= 1; i--)
-			{
-				this.removeChildAt( i );
-			}
-			for(i = this.header.numChildren - 1; i >= 0; i--)
-			{
-				this.header.removeChildAt( i );
-			}
+			this.scrollContainer.removeChildren();
+			this.header.removeChildren();
 			this.numColons = 0;
 			this._selectedIndex = -1;
 			this._selectedIndices = new <int>[]; 
@@ -397,8 +399,8 @@ package feathers.extensions.dataGrid
 			itemRenderer.gridLines = dataGridLines;
 			layoutGroup.addChild( dataGridLines );
 				
-			this.addChild( layoutGroup );
-			dataGridLines.index = itemRenderer.index = this.numChildren - 2;
+			this.scrollContainer.addChild( layoutGroup );
+			dataGridLines.index = itemRenderer.index = this.scrollContainer.numChildren - 1;
 			
 			itemRenderer.dataGridChangeHandler();
 			
@@ -409,12 +411,12 @@ package feathers.extensions.dataGrid
 				{
 					if(!columns)
 					{
-						id = this._getChildAt(1).getChildAt(0).getChildAt(i).id;
+						id = this._getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(i).id;
 						(header.getChildAt(i) as DataGridToggleButton).label = id;
 					}
 					else if( !columns.getItemAt(0).hasOwnProperty("headerText") )
 					{
-						id = this._getChildAt(1).getChildAt(0).getChildAt(i).id;
+						id = this._getChildAt(0).getChildAt(0).getChildAt(i).id;
 						(header.getChildAt(i) as DataGridToggleButton).label = id;
 					}
 					else
@@ -459,13 +461,13 @@ package feathers.extensions.dataGrid
 				}
 			}
 			
-			for(i = 1 + index; i < this.numChildren; i++)
+			for(i = index + 1; i < this.scrollContainer.numChildren; i++)
 			{
 				this._getChildAt(i).getChildAt(0).index--;
 				this._getChildAt(i).getChildAt(1).index--;
 			}
 			
-			this.removeChildAt( 1 + index );
+			this.scrollContainer.removeChildAt( index );
 			
 			if(this.dataProvider.length == 0)
 			{
@@ -482,7 +484,7 @@ package feathers.extensions.dataGrid
 		 */
 		public function dataProvider_replaceItemHandler(event:Event, index:int):void
 		{
-			this._getChildAt( 1 + index).getChildAt(0).dataGridChangeHandler();
+			this._getChildAt( index ).getChildAt(0).dataGridChangeHandler();
 		} 
 		
 		/**
@@ -508,7 +510,7 @@ package feathers.extensions.dataGrid
 			}
 			//this.validate();
 			
-			for(var i:int = 1; i < this.numChildren; i++)
+			for(var i:int = 0; i < this.scrollContainer.numChildren; i++)
 			{
 				this._getChildAt(i).getChildAt(1).lines();
 			}
@@ -521,7 +523,7 @@ package feathers.extensions.dataGrid
 		{
 			var colons:Vector.<int> = new <int>[];
 			for(var i:int = 0; i<this.numColons; i++) colons.push(0);
-			for(i = 1; i<this.numChildren; i++)
+			for(i = 0; i<this.scrollContainer.numChildren; i++)
 			{
 				var children:DisplayObjectContainer = this._getChildAt(i).getChildAt(0) as DisplayObjectContainer;
 				for(var j:int = 0; j<children.numChildren; j++)
@@ -534,37 +536,40 @@ package feathers.extensions.dataGrid
 				var lineSize:Number = (i == 0 || i == numColons -1) ? this.lineSize * 1.5 : this.lineSize;
 				header.getChildAt(i).width = colons[i] + lineSize;
 			}
+			for(i = 0; i<this.scrollContainer.numChildren; i++)
+			{
+				for(j = 0; j<this.numColons; j++)
+				{
+					lineSize = (j == 0 || j == numColons - 1) ? this.lineSize * 1.5 : this.lineSize;
+					this._getChildAt(i).getChildAt(0).getChildAt(j).width = header.getChildAt(j).width - lineSize;
+				}
+				this._getChildAt(i).getChildAt(0).validate();
+			}
 			if(this.numColons > 0)
 			{
 				if(requestedRowCount == -1)
 				{
-					this.height = NaN;
+					this.height = this.scrollContainer.height = NaN;
 				}
 				else
 				{
 					lineSize = (requestedRowCount != 0) ? this.lineSize : 0;
-					this.height = header.height + this.getChildAt(1).height * requestedRowCount + lineSize;
+					this.scrollContainer.height = this._getChildAt( this.scrollContainer.numChildren - 1 ).height * requestedRowCount - lineSize * (requestedRowCount - 1);
+					this.height = this.header.height + this.scrollContainer.height;
 				}
 			}
 			else
 			{
 				if(requestedRowCount == -1)
 				{
-					this.height = NaN;
+					this.height = this.scrollContainer.height = NaN;
 				}
 				else
 				{
 					requestedRowCountDefault();
 					lineSize = (requestedRowCount != 0) ? this.lineSize : 0;
-					this.height = itemRendererHeight + headerHeight * requestedRowCount + lineSize;
-				}
-			}
-			for(i = 1; i<this.numChildren; i++)
-			{
-				for(j = 0; j<this.numColons; j++)
-				{
-					lineSize = (j == 0 || j == numColons -1) ? this.lineSize * 1.5 : this.lineSize;
-					this._getChildAt(i).getChildAt(0).getChildAt(j).width = header.getChildAt(j).width - lineSize;
+					this.scrollContainer.height = itemRendererHeight * requestedRowCount - lineSize * (requestedRowCount - 1);
+					this.height = headerHeight + this.scrollContainer.height;
 				}
 			}
 			cellsAlign = true;
@@ -589,14 +594,14 @@ package feathers.extensions.dataGrid
 								var location:Point = touch.getLocation(_selectIndex as DisplayObjectContainer);
 								if(location.y >= lineTop.y && location.y <= lineTop.y + lineTop.height / 2)
 								{
-									_selectIndex = this._getChildAt( this.getChildIndex(_selectIndex.parent) - 1 ).getChildAt(1);
+									_selectIndex = this._getChildAt( this.scrollContainer.getChildIndex(_selectIndex.parent) - 1 ).getChildAt(1);
 								}
 							}
 						}
 						var selectLines:DataGridLines = (_selectIndex is DataGridLines) ? _selectIndex as DataGridLines : _selectIndex.gridLines;
 						if(!this.allowMultipleSelection && this.selectedIndex != -1)
 						{
-							var actualLines:DataGridLines = this._getChildAt( 1 + this.selectedIndex).getChildAt(1) as DataGridLines;
+							var actualLines:DataGridLines = this._getChildAt( this.selectedIndex ).getChildAt(1) as DataGridLines;
 							if(actualLines != selectLines)
 							{
 								actualLines.isSelected = actualLines.itemRenderer.isSelected = false;
@@ -639,17 +644,18 @@ package feathers.extensions.dataGrid
 		}
 		private function selectTouch(target:Object):Boolean
 		{
-			while (target != this && target != stage)
+			while (target != this.scrollContainer && target != stage)
 			{
 				target = target.parent;
+				
 			}
-			return target == this;
+			return target == this.scrollContainer;
 		}
 		private function selectTouchIndex(target:Object):Object
 		{
-			while (target.parent.parent.parent != this)
+			while (target.parent.parent.parent != this.scrollContainer)
 			{
-				if(target is ScrollBar && target.parent == this) break;
+				if(target is ScrollBar && target.parent == this.scrollContainer) break;
 				target = target.parent;
 			}
 			return target;
@@ -665,7 +671,7 @@ package feathers.extensions.dataGrid
 		}
 		private function removeAllSelectedIndex():void
 		{
-			for(var i:int = 1; i<this.numChildren; i++)
+			for(var i:int = 0; i<this.scrollContainer.numChildren; i++)
 			{
 				var children:Object = this._getChildAt(i).getChildAt(1);
 				children.isSelected = children.itemRenderer.isSelected = false;
@@ -674,7 +680,7 @@ package feathers.extensions.dataGrid
 		}
 		private function selectIndex(index:int):void
 		{
-			for(var i:int = 1; i<this.numChildren; i++)
+			for(var i:int = 0; i<this.scrollContainer.numChildren; i++)
 			{
 				var children:Object = this._getChildAt(i).getChildAt(1);
 				if(index == children.index)
@@ -691,7 +697,7 @@ package feathers.extensions.dataGrid
 		 */
 		public function getItemAt(index:int):Object
 		{
-			for(var i:int = 1; i<this.numChildren; i++)
+			for(var i:int = 0; i<this.scrollContainer.numChildren; i++)
 			{
 				var children:Object = this._getChildAt(i).getChildAt(0);
 				if(index == children.index)
@@ -715,11 +721,11 @@ package feathers.extensions.dataGrid
 		{
 			if(!columns)
 			{
-				return this._getChildAt(1).getChildAt(0).getChildAt(columnIndex).id;
+				return this._getChildAt(0).getChildAt(0).getChildAt(columnIndex).id;
 			}
 			else if( !columns.getItemAt(columnIndex).hasOwnProperty("dataField") )
 			{
-				return this._getChildAt(1).getChildAt(0).getChildAt(columnIndex).id;
+				return this._getChildAt(0).getChildAt(0).getChildAt(columnIndex).id;
 			}
 			else
 			{
@@ -732,7 +738,57 @@ package feathers.extensions.dataGrid
 		 */
 		public function _getChildAt(index:int):Object
 		{
-			return this.getChildAt(index) as Object;
+			return this.scrollContainer.getChildAt(index) as Object;
+		}
+		
+		private var _horizontalScrollStep:Number = NaN;
+		/**
+		 * The number of pixels the horizontal scroll position can be adjusted
+		 * by a "step". Passed to the horizontal scroll bar, if one exists.
+		 * Touch scrolling is not affected by the step value.
+		 *
+		 * <p>In the following example, the horizontal scroll step is customized:</p>
+		 *
+		 * <listing version="3.0">
+		 * dataGrid.horizontalScrollStep = 0;</listing>
+		 *
+		 * @default NaN
+		 */
+		public function get horizontalScrollStep():Number
+		{
+			return _horizontalScrollStep;
+		}
+		public function set horizontalScrollStep(value:Number):void
+		{
+			this._horizontalScrollStep = value;
+			this.scrollContainer.horizontalScrollStep = horizontalScrollStep;
+		}
+		
+		private var _verticalScrollStep:Number = NaN;
+		/**
+		 * The number of pixels the vertical scroll position can be adjusted
+		 * by a "step". Passed to the vertical scroll bar, if one exists.
+		 * Touch scrolling is not affected by the step value.
+		 *
+		 * <p>In the following example, the vertical scroll step is customized:</p>
+		 *
+		 * <listing version="3.0">
+		 * dataGrid.verticalScrollStep = 0;</listing>
+		 *
+		 * @default NaN
+		 */
+		public function get verticalScrollStep():Number
+		{
+			return _verticalScrollStep;
+		}
+
+		/**
+		 * @private
+		 */
+		public function set verticalScrollStep(value:Number):void
+		{
+			this._verticalScrollStep = value;
+			this.scrollContainer.verticalScrollStep = verticalScrollStep;
 		}
 	}
 }

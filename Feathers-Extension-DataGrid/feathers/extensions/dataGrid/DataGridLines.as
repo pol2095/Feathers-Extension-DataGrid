@@ -1,3 +1,9 @@
+/*
+Copyright 2016 pol2095. All Rights Reserved.
+
+This program is free software. You can redistribute and/or modify it in
+accordance with the terms of the accompanying license agreement.
+*/
 package feathers.extensions.dataGrid
 {
 	import feathers.core.FeathersControl;
@@ -90,14 +96,14 @@ package feathers.extensions.dataGrid
 			
 			for(i = 0; i < this.itemRenderer.numChildren - 1; i++)
 			{
-				var _height:Number = (index == owner.numChildren - 2) ? lineSize * 2 : lineSize;
+				var _height:Number = (index == owner.scrollContainer.numChildren - 1) ? lineSize * 2 : lineSize;
 				lineInters.push( new Quad(lineSize, this.itemRenderer.height - _height, defaultLineColor) );
 				lineInters[i].x = this.itemRenderer.getChildAt(i).x + this.itemRenderer.getChildAt(i).width;
 				lineInters[i].y = this.itemRenderer.y + lineSize;
 				this.addChild( lineInters[i] );
 			}
 			
-			if(index == owner.numChildren - 2)
+			if(index == owner.scrollContainer.numChildren - 1)
 			{
 				lineBottom.visible = true;
 				this.itemRenderer.layout.paddingBottom = this.itemRenderer.layout.paddingTop;
@@ -127,11 +133,11 @@ package feathers.extensions.dataGrid
 		}
 		private function get nextIndex():DataGridLines
 		{
-			return owner._getChildAt( index + 2 ).getChildAt(1) as DataGridLines;
+			return owner._getChildAt( index + 1 ).getChildAt(1) as DataGridLines;
 		}
 		private function get prevIndex():DataGridLines
 		{
-			return owner._getChildAt( index ).getChildAt(1) as DataGridLines;
+			return owner._getChildAt( index - 1 ).getChildAt(1) as DataGridLines;
 		}
 	}
 }
