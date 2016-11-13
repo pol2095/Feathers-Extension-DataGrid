@@ -17,7 +17,7 @@ package feathers.extensions.dataGrid
 	import feathers.controls.ScrollBar;
 	import flash.utils.getQualifiedClassName;
 	import starling.display.DisplayObjectContainer;
-    import starling.events.Event;
+	import starling.events.Event;
 	import starling.events.TouchEvent;
 	import starling.events.Touch;
 	import starling.events.TouchPhase;
@@ -29,8 +29,8 @@ package feathers.extensions.dataGrid
 	 */
 	[Event(name="change", type="feathers.extensions.dataGrid.events.RowChangeEvent")]
  
-    public class DataGrid extends ScrollContainer
-    {
+	public class DataGrid extends ScrollContainer
+	{
 		/**
 		 * the size of the datagrid lines in pixels
 		 *
@@ -64,13 +64,13 @@ package feathers.extensions.dataGrid
 		
 		/**
 		 * <p>The list of GridColumn objects displayed by this grid. Each column selects different data provider item properties to display.</p>
-		 *  
+		 *
 		 * <p>In the columns ListCollection three keys can be used :</p>
 		 * <p>- "dataField" : a key of a dataProvider item.</p>
 		 * <p>- "headerText" : the name of a column.</p>
 		 * <p>- "type" : "string" or "numeric", the default value is "string".</p>
 		 *
-		 *  @default null
+		 * @default null
 		 */
 		public var columns:ListCollection;
 		
@@ -78,24 +78,24 @@ package feathers.extensions.dataGrid
 		 * The DataGrid displays a row of column headings above a scrollable grid. The grid is arranged as a collection of individual cells arranged in rows and columns. The DataGrid control is designed to support smooth scrolling through large numbers of rows and columns.
 		 */	
 		public function DataGrid()
-        {
+		{
 			super();
 			
 			if(!this.layout) this.layout = new VerticalLayout();
 			this.addEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
 			header.layout = new HorizontalLayout();
 			this.addChild(header);
-        }
+		}
 		
 		private function addedToStageHandler(event:Event):void
-        {
+		{
 			stage.addEventListener(TouchEvent.TOUCH, onTouchEvent);
 		}
 		
 		/**
-		 *  The header of the datagrid.
+		 * The header of the datagrid.
 		 */		
-		public  var header:LayoutGroup = new LayoutGroup();
+		public var header:LayoutGroup = new LayoutGroup();
 		private var cellsAlign:Boolean;
 				
 		private function requestedRowCountDefault():void
@@ -143,7 +143,7 @@ package feathers.extensions.dataGrid
 		 * @private 
 		 */
 		public function rowChange(index:int):void
-        {
+		{
 			dispatchEvent(new RowChangeEvent( RowChangeEvent.CHANGE, index ));
 		}
 		
@@ -488,16 +488,16 @@ package feathers.extensions.dataGrid
 		/**
 		 * @private
 		 */
-        override protected function draw():void
-        {
+		override protected function draw():void
+		{
 			super.draw();
 			this._autoSizeIfNeeded();
-        }
+		}
 		/**
 		 * @private
 		 */
-        protected function _autoSizeIfNeeded():void
-        {
+		protected function _autoSizeIfNeeded():void
+		{
 			if(!cellsAlign)
 			{
 				autoSizeHeader();
@@ -506,19 +506,19 @@ package feathers.extensions.dataGrid
 			{
 				cellsAlign = false;
 			}
-            //this.validate();
+			//this.validate();
 			
 			for(var i:int = 1; i < this.numChildren; i++)
 			{
 				this._getChildAt(i).getChildAt(1).lines();
 			}
 			updateIndices();
-        }
+		}
 		/**
 		 * @private
 		 */
 		protected function autoSizeHeader():void
-        {
+		{
 			var colons:Vector.<int> = new <int>[];
 			for(var i:int = 0; i<this.numColons; i++) colons.push(0);
 			for(i = 1; i<this.numChildren; i++)
@@ -534,7 +534,7 @@ package feathers.extensions.dataGrid
 				var lineSize:Number = (i == 0 || i == numColons -1) ? this.lineSize * 1.5 : this.lineSize;
 				header.getChildAt(i).width = colons[i] + lineSize;
 			}
-			if(this.numColons  > 0)
+			if(this.numColons > 0)
 			{
 				if(requestedRowCount == -1)
 				{
@@ -734,5 +734,5 @@ package feathers.extensions.dataGrid
 		{
 			return this.getChildAt(index) as Object;
 		}
-    }
+	}
 }
