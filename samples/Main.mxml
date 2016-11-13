@@ -1,0 +1,49 @@
+<f:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+    xmlns:f="library://ns.feathersui.com/mxml"
+	theme="feathers.extensions.dataGrid.themes.DataGridMetalWorksDesktopTheme"
+	creationComplete="creationCompleteHandler(event)"
+	xmlns:components="feathers.extensions.dataGrid.*">
+	<f:layout>
+		<f:VerticalLayout/>
+	</f:layout>
+	<f:Label id="label2" text="label"/>
+	<components:DataGrid id="dataGrid" itemRenderer="{components.DataGridItemRenderer}" change="rowChangeHandler(event)" requestedRowCount="3">
+		<components:columns>
+			<f:ListCollection>
+				<fx:Object dataField="check" headerText="" type="numeric"/>
+				<fx:Object dataField="comment" headerText="Comment"/>
+				<fx:Object headerText="Email"/>
+				<fx:Object headerText="adress"/>
+			</f:ListCollection>
+		</components:columns>
+	</components:DataGrid>
+	<f:Button id="button" label="remove item" triggered="button_triggeredHandler(event)"/>
+	
+	<fx:Script>
+		<![CDATA[
+			import feathers.data.ListCollection;
+			import components.DataGridItemRenderer;
+			import feathers.extensions.dataGrid.events.RowChangeEvent;
+			
+			private function creationCompleteHandler( event:Event ):void
+			{
+				dataGrid.dataProvider = new ListCollection(
+				[
+					{ check: 1, comment: "comment", label: "mail1", label2: "adress1"  },
+					{ check: 0, comment: "comment2", label: "mail2", label2: "adress3"  },
+					{ check: 1, comment: "comment", label: "mail4", label2: "adress2"  },
+					{ check: 0, comment: "comment2", label: "mail3", label2: "adress4"  }
+				]);
+			}
+			
+			private function button_triggeredHandler( event:Event ):void
+			{
+				dataGrid.dataProvider.removeItemAt(0);
+			}
+			private function rowChangeHandler(event:RowChangeEvent):void
+			{
+				trace(event.index);
+			}
+		]]>
+	</fx:Script>
+</f:Application>

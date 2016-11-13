@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<components:Row xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:f="library://ns.feathersui.com/mxml"
+	xmlns:components="feathers.extensions.dataGrid.*">
+	
+	<fx:Script>
+		<![CDATA[
+			override public function dataGridChangeHandler():void
+			{
+				super.dataGridChangeHandler(); //never forget to add this!
+				
+				checkBox.isSelected = this.data.check == 1 ? true : false;
+				textInput.text = this.data.comment;
+				label.text = this.data.label;
+				label2.text = this.data.label2;
+			}
+			
+			override protected function rowChangeHandler():void
+			{
+				if(isChanging) return; //never forget to add this!
+				
+				this.data.check = checkBox.isSelected ? 1 : 0;
+				this.data.comment = textInput.text;
+				
+				super.rowChangeHandler(); //never forget to add this!
+			}
+		]]>
+	</fx:Script>
+	
+	<components:layout>
+		<f:HorizontalLayout/>
+	</components:layout>
+		
+	<f:Check id="checkBox" change="rowChangeHandler()"/>
+	<f:TextInput id="textInput" change="rowChangeHandler()"/>
+	<f:Label id="label" text="item renderer"/>
+	<f:Label id="label2" text="item renderer"/>
+</components:Row>
