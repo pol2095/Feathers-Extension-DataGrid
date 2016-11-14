@@ -15,4 +15,4 @@ The DataGrid displays a row of column headings above a scrollable grid. The grid
 
 * [Adobe AIR 23.0](https://get.adobe.com/air/) or [Adobe Flash Player 19.0](https://get.adobe.com/fr/flashplayer/)
 * [Starling Framework 2.1](https://github.com/Gamua/Starling-Framework)
-* [Feathers Framework](https://feathersui.com/download/)
+* [Feathers Framework 3.1](https://feathersui.com/download/)
