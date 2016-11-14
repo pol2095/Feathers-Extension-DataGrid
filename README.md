@@ -13,6 +13,6 @@ The DataGrid displays a row of column headings above a scrollable grid. The grid
 
 ## Minimum Requirements
 
-* Adobe AIR 19.0 or Adobe Flash Player 19.0
-* [Starling Framework 2.0](http://forum.starling-framework.org/topic/preview-starling-20)
-* [Feathers Framework](https://github.com/BowlerHatLLC/feathers)
+* [Adobe AIR 23.0] https://get.adobe.com/air/ or [Adobe Flash Player 19.0] https://get.adobe.com/fr/flashplayer/
+* [Starling Framework 2.1](https://github.com/Gamua/Starling-Framework)
+* [Feathers Framework](https://feathersui.com/download/)
