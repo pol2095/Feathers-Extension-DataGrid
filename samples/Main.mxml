@@ -6,7 +6,7 @@
 	<f:layout>
 		<f:VerticalLayout/>
 	</f:layout>
-	<f:Label id="label2" text="label"/>
+	<f:Label id="label" text="label"/>
 	<components:DataGrid id="dataGrid" itemRenderer="{components.DataGridItemRenderer}" change="rowChangeHandler(event)" requestedRowCount="3">
 		<components:columns>
 			<f:ListCollection>
