@@ -36,26 +36,50 @@ package feathers.extensions.dataGrid
 	 */	
 	public class DataGrid extends LayoutGroup
 	{
+		private var _lineSize:Number = 2;
 		/**
-		 * the size of the datagrid lines in pixels
+		 * the size of the datagrid lines in pixels.
 		 *
 		 * @default 2
 		 */
-		public var lineSize:Number = 2;
+		public function get lineSize():Number
+		{
+			return this._lineSize;
+		}
+		public function set lineSize(value:Number):void
+		{
+			this._lineSize = value;
+		}
 		
+		private var _defaultLineColor:uint = 0xCCCCCC;
 		/**
-		 * the default color of lines when a row is not selected
+		 * the default color of lines when a row is not selected.
 		 *
 		 * @default 0xCCCCCC
 		 */
-		public var defaultLineColor:uint = 0xCCCCCC;
+		public function get defaultLineColor():uint
+		{
+			return this._defaultLineColor;
+		}
+		public function set defaultLineColor(value:uint):void
+		{
+			this._defaultLineColor = value;
+		}
 		
+		private var _selectLineColor:uint = 0xFFA500;
 		/**
-		 * The color of lines when a row is selected
+		 * The color of lines when a row is selected.
 		 *
 		 * @default 0xCCCCCC
 		 */
-		public var selectLineColor:uint = 0xFFA500;
+		public function get selectLineColor():uint
+		{
+			return this._selectLineColor;
+		}
+		public function set selectLineColor(value:uint):void
+		{
+			this._selectLineColor = value;
+		}
 		
 		private var _requestedRowCount:int = -1;
 		/**
