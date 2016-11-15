@@ -28,7 +28,12 @@ package feathers.extensions.dataGrid
 	 * Dispatched when a datagrid row changes.
 	 */
 	[Event(name="change", type="feathers.extensions.dataGrid.events.RowChangeEvent")]
- 
+	
+	/**
+	 * The DataGrid displays a row of column headings above a scrollable grid. The grid is arranged as a collection of individual cells arranged in rows and columns. The DataGrid control is designed to support smooth scrolling through large numbers of rows and columns.
+	 *
+	 * @see http://pol2095.free.fr/Feathers-Extension-DataGrid/ How to use DataGrid with mxml
+	 */	
 	public class DataGrid extends LayoutGroup
 	{
 		/**
@@ -52,12 +57,22 @@ package feathers.extensions.dataGrid
 		 */
 		public var selectLineColor:uint = 0xFFA500;
 		
+		public var _requestedRowCount:int = -1;
 		/**
 		 * Requests that the layout set the view port dimensions to display a specific number of rows
+		 * <p>If you use this property, you can't use rowsHeight.</p>
 		 *
 		 * @default -1
 		 */
-		public var requestedRowCount:int = -1;
+		public function get requestedRowCount():int
+		{
+			return this._requestedRowCount;
+		}
+		public function set requestedRowCount(value:int):void
+		{
+			if( !isNaN(this.rowsHeight) ) this.rowsHeight = NaN;
+			this._requestedRowCount = value;
+		}
 		
 		private var headerHeight:Number = 0;
 		private var itemRendererHeight:Number;
@@ -74,9 +89,6 @@ package feathers.extensions.dataGrid
 		 */
 		public var columns:ListCollection;
 		
-		/**
-		 * The DataGrid displays a row of column headings above a scrollable grid. The grid is arranged as a collection of individual cells arranged in rows and columns. The DataGrid control is designed to support smooth scrolling through large numbers of rows and columns.
-		 */	
 		public function DataGrid()
 		{
 			super();
@@ -106,7 +118,7 @@ package feathers.extensions.dataGrid
 				
 		private function requestedRowCountDefault():void
 		{
-			if(headerHeight == 0)
+			if(headerHeight == 0 && this.header.visible)
 			{
 				var button:DataGridToggleButton = new DataGridToggleButton();
 				button.validate();
@@ -295,6 +307,7 @@ package feathers.extensions.dataGrid
 
 			this.scrollContainer.removeChildren();
 			for(var i:int = 0; i<this._dataProvider.length; i++) addItem(i);
+			this.invalidate(INVALIDATION_FLAG_LAYOUT);
 		}
 		
 		private var _selectedIndex:int = -1;
@@ -369,6 +382,7 @@ package feathers.extensions.dataGrid
 		public function dataProvider_addItemHandler(event:Event, index:int):void
 		{
 			addItem(index);
+			this.invalidate(INVALIDATION_FLAG_LAYOUT);
 		}
 		private function addItem(index:int):void
 		{
@@ -379,12 +393,15 @@ package feathers.extensions.dataGrid
 				for (var key:String in item)
 				{
 					numColons++;
-					var button:DataGridToggleButton = new DataGridToggleButton();
-					button.isEnabled = sortable;
-					button.isToggle = false;
-					button.styleNameList.add("toggleButton-arrow");
-					button.addEventListener( Event.TRIGGERED, toggleButton_triggeredHandler );
-					header.addChild(button);
+					if(this.header.visible)
+					{
+						var button:DataGridToggleButton = new DataGridToggleButton();
+						button.isEnabled = sortable;
+						button.isToggle = false;
+						button.styleNameList.add("toggleButton-arrow");
+						button.addEventListener( Event.TRIGGERED, toggleButton_triggeredHandler );
+						header.addChild(button);
+					}
 				}
 				if(numColons != 0) createHeader = true;
 			}
@@ -404,7 +421,7 @@ package feathers.extensions.dataGrid
 			
 			itemRenderer.dataGridChangeHandler();
 			
-			if(createHeader)
+			if(createHeader && this.header.visible)
 			{
 				var id:String;
 				for(var i:int = 0; i<itemRenderer.numChildren; i++)
@@ -477,6 +494,7 @@ package feathers.extensions.dataGrid
 				}
 				this.numColons = 0;
 			}
+			this.invalidate(INVALIDATION_FLAG_LAYOUT);
 		}
 
 		/**
@@ -531,17 +549,18 @@ package feathers.extensions.dataGrid
 					if(children.getChildAt(j).width > colons[j]) colons[j] = children.getChildAt(j).width;
 				}
 			}
-			for(i = 0; i<this.numColons; i++)
+			var lineSize:Number;
+			for(i = 0; i<this.header.numChildren; i++)
 			{
-				var lineSize:Number = (i == 0 || i == numColons -1) ? this.lineSize * 1.5 : this.lineSize;
-				header.getChildAt(i).width = colons[i] + lineSize;
+				lineSize = (i == 0 || i == numColons -1) ? this.lineSize * 1.5 : this.lineSize;
+				if(this.header.visible) header.getChildAt(i).width = colons[i] + lineSize;
 			}
 			for(i = 0; i<this.scrollContainer.numChildren; i++)
 			{
 				for(j = 0; j<this.numColons; j++)
 				{
 					lineSize = (j == 0 || j == numColons - 1) ? this.lineSize * 1.5 : this.lineSize;
-					this._getChildAt(i).getChildAt(0).getChildAt(j).width = header.getChildAt(j).width - lineSize;
+					this._getChildAt(i).getChildAt(0).getChildAt(j).width = colons[j];
 				}
 				this._getChildAt(i).getChildAt(0).validate();
 			}
@@ -549,30 +568,29 @@ package feathers.extensions.dataGrid
 			{
 				if(requestedRowCount == -1)
 				{
-					this.height = this.scrollContainer.height = NaN;
+					if( isNaN(rowsHeight) ) this.scrollContainer.height = NaN;
 				}
 				else
 				{
 					lineSize = (requestedRowCount != 0) ? this.lineSize : 0;
 					this.scrollContainer.height = this._getChildAt( this.scrollContainer.numChildren - 1 ).height * requestedRowCount - lineSize * (requestedRowCount - 1);
-					this.height = this.header.height + this.scrollContainer.height;
 				}
 			}
 			else
 			{
 				if(requestedRowCount == -1)
 				{
-					this.height = this.scrollContainer.height = NaN;
+					if( isNaN(rowsHeight) ) this.scrollContainer.height = NaN;
 				}
 				else
 				{
 					requestedRowCountDefault();
 					lineSize = (requestedRowCount != 0) ? this.lineSize : 0;
 					this.scrollContainer.height = itemRendererHeight * requestedRowCount - lineSize * (requestedRowCount - 1);
-					this.height = headerHeight + this.scrollContainer.height;
 				}
 			}
 			cellsAlign = true;
+			this.invalidate(INVALIDATION_FLAG_LAYOUT);
 		}
 		
 		private function onTouchEvent(event:TouchEvent):void {
@@ -789,6 +807,32 @@ package feathers.extensions.dataGrid
 		{
 			this._verticalScrollStep = value;
 			this.scrollContainer.verticalScrollStep = verticalScrollStep;
+		}
+		
+		/**
+		 * <p>The height of the datagrid rows without the header.</p>
+		 * <p>If you use this property, you can't use requestedRowCount.</p>
+		 *
+		 * @default NaN
+		 */
+		public function get rowsHeight():Number
+		{
+			return this.scrollContainer.height;
+		}
+		public function set rowsHeight(value:Number):void
+		{
+			this._requestedRowCount = -1;
+			this.scrollContainer.height = value;
+		}
+		
+		/**
+		 * Hide the header.
+		 *
+		 * @default false
+		 */
+		public function set hideHeader(value:Boolean):void
+		{
+			this.header.visible = !this.header.visible;
 		}
 	}
 }

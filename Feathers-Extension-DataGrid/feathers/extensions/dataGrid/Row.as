@@ -10,7 +10,12 @@ package feathers.extensions.dataGrid
 	import starling.events.EnterFrameEvent;
 	import feathers.layout.HorizontalLayout;
  
-    public class Row extends LayoutGroup
+    /**
+	 * The row of a datagrid control.
+	 *
+	 * @see http://pol2095.free.fr/Feathers-Extension-DataGrid/ How to use DataGrid with mxml
+	 */
+	public class Row extends LayoutGroup
     {
 		/**
 		 * @private
