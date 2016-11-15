@@ -57,10 +57,10 @@ package feathers.extensions.dataGrid
 		 */
 		public var selectLineColor:uint = 0xFFA500;
 		
-		public var _requestedRowCount:int = -1;
+		private var _requestedRowCount:int = -1;
 		/**
-		 * <p>Requests that the layout set the view port dimensions to display a specific number of rows.</p>
-		 * <p>This property is ignored if datagrid height is set.</p>
+		 * Requests that the layout set the view port dimensions to display a specific number of rows
+		 * <p>If you use this property, you can't use rowsHeight.</p>
 		 *
 		 * @default -1
 		 */
@@ -70,6 +70,7 @@ package feathers.extensions.dataGrid
 		}
 		public function set requestedRowCount(value:int):void
 		{
+			if( !isNaN(this.rowsHeight) ) this.rowsHeight = NaN;
 			this._requestedRowCount = value;
 		}
 		
@@ -110,7 +111,7 @@ package feathers.extensions.dataGrid
 		 */		
 		public var header:LayoutGroup = new LayoutGroup();
 		/**
-		 * The scroller of the datagrid.
+		 * @private 
 		 */	
 		public var scrollContainer:ScrollContainer = new ScrollContainer();
 		private var cellsAlign:Boolean;
@@ -124,7 +125,6 @@ package feathers.extensions.dataGrid
 				headerHeight = button.height;
 				button = null;
 			}
-			if(!this.header.visible) headerHeight = 0;
 			
 			var itemRenderer:Object = new ItemRenderer();
 			itemRenderer.owner = this;
@@ -428,7 +428,7 @@ package feathers.extensions.dataGrid
 				{
 					if(!columns)
 					{
-						id = this._getChildAt(0).getChildAt(0).getChildAt(i).id;
+						id = this._getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(i).id;
 						(header.getChildAt(i) as DataGridToggleButton).label = id;
 					}
 					else if( !columns.getItemAt(0).hasOwnProperty("headerText") )
@@ -566,13 +566,9 @@ package feathers.extensions.dataGrid
 			}
 			if(this.numColons > 0)
 			{
-				if( !isNaN(this.height) )
+				if(requestedRowCount == -1)
 				{
-					this.scrollContainer.height = this.height - this.header.height;
-				}
-				else if(requestedRowCount == -1)
-				{
-					this.scrollContainer.height = NaN;
+					if( isNaN(rowsHeight) ) this.scrollContainer.height = NaN;
 				}
 				else
 				{
@@ -584,13 +580,13 @@ package feathers.extensions.dataGrid
 			{
 				if(requestedRowCount == -1)
 				{
-					this.scrollContainer.height = NaN;
+					if( isNaN(rowsHeight) ) this.scrollContainer.height = NaN;
 				}
 				else
 				{
 					requestedRowCountDefault();
 					lineSize = (requestedRowCount != 0) ? this.lineSize : 0;
-					this.scrollContainer.height = this.headerHeight + itemRendererHeight * requestedRowCount - lineSize * (requestedRowCount - 1);
+					this.scrollContainer.height = itemRendererHeight * requestedRowCount - lineSize * (requestedRowCount - 1);
 				}
 			}
 			cellsAlign = true;
@@ -811,6 +807,22 @@ package feathers.extensions.dataGrid
 		{
 			this._verticalScrollStep = value;
 			this.scrollContainer.verticalScrollStep = verticalScrollStep;
+		}
+		
+		/**
+		 * <p>The height of the datagrid rows without the header.</p>
+		 * <p>If you use this property, you can't use requestedRowCount.</p>
+		 *
+		 * @default NaN
+		 */
+		public function get rowsHeight():Number
+		{
+			return this.scrollContainer.height;
+		}
+		public function set rowsHeight(value:Number):void
+		{
+			this._requestedRowCount = -1;
+			this.scrollContainer.height = value;
 		}
 		
 		/**
