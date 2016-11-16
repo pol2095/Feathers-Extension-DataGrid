@@ -126,7 +126,7 @@ package feathers.extensions.dataGrid
 		
 		private function addedToStageHandler(event:Event):void
 		{
-			stage.addEventListener(TouchEvent.TOUCH, onTouchEvent);
+			this.scrollContainer.addEventListener(TouchEvent.TOUCH, onTouchEvent);
 		}
 		
 		/**
@@ -614,79 +614,67 @@ package feathers.extensions.dataGrid
 		
 		private function onTouchEvent(event:TouchEvent):void {
 			if(!isSelectable) return;
-			var touch:Touch = event.getTouch(this);
+			var touch:Touch = event.getTouch(this.scrollContainer);
 			if(!touch) return;
 			if (touch.phase == TouchPhase.BEGAN) {
 				var target:Object = touch.target as Object;
-				if( selectTouch(target) )
+				var _selectIndex:Object = selectTouchIndex(target);
+				if(_selectIndex.hasOwnProperty("index"))
 				{
-					var _selectIndex:Object = selectTouchIndex(target);
-					if(_selectIndex.hasOwnProperty("index"))
+					if(_selectIndex is DataGridLines && _selectIndex.index != 0) //correction line top touch
 					{
-						if(_selectIndex is DataGridLines && _selectIndex.index != 0) //correction line top touch
+						var lineTop:Quad = _selectIndex.lineTop;
+						if(target == lineTop)
 						{
-							var lineTop:Quad = _selectIndex.lineTop;
-							if(target == lineTop)
+							var location:Point = touch.getLocation(_selectIndex as DisplayObjectContainer);
+							if(location.y >= lineTop.y && location.y <= lineTop.y + lineTop.height / 2)
 							{
-								var location:Point = touch.getLocation(_selectIndex as DisplayObjectContainer);
-								if(location.y >= lineTop.y && location.y <= lineTop.y + lineTop.height / 2)
-								{
-									_selectIndex = this._getChildAt( this.scrollContainer.getChildIndex(_selectIndex.parent) - 1 ).getChildAt(1);
-								}
+								_selectIndex = this._getChildAt( this.scrollContainer.getChildIndex(_selectIndex.parent) - 1 ).getChildAt(1);
 							}
 						}
-						var selectLines:DataGridLines = (_selectIndex is DataGridLines) ? _selectIndex as DataGridLines : _selectIndex.gridLines;
-						if(!this.allowMultipleSelection && this.selectedIndex != -1)
+					}
+					var selectLines:DataGridLines = (_selectIndex is DataGridLines) ? _selectIndex as DataGridLines : _selectIndex.gridLines;
+					if(!this.allowMultipleSelection && this.selectedIndex != -1)
+					{
+						var actualLines:DataGridLines = this._getChildAt( this.selectedIndex ).getChildAt(1) as DataGridLines;
+						if(actualLines != selectLines)
 						{
-							var actualLines:DataGridLines = this._getChildAt( this.selectedIndex ).getChildAt(1) as DataGridLines;
-							if(actualLines != selectLines)
-							{
-								actualLines.isSelected = actualLines.itemRenderer.isSelected = false;
-								actualLines.selectedLines();
-							}
+							actualLines.isSelected = actualLines.itemRenderer.isSelected = false;
+							actualLines.selectedLines();
 						}
-						selectLines.isSelected = selectLines.itemRenderer.isSelected = !selectLines.isSelected;
-						selectLines.selectedLines();
-						if(this.allowMultipleSelection)
+					}
+					selectLines.isSelected = selectLines.itemRenderer.isSelected = !selectLines.isSelected;
+					selectLines.selectedLines();
+					if(this.allowMultipleSelection)
+					{
+						if(!selectLines.isSelected)
 						{
-							if(!selectLines.isSelected)
-							{
-								this._selectedIndices.splice( this._selectedIndices.indexOf(_selectIndex.index), 1 );
-								this._selectedIndex = (this._selectedIndices.length == 0) ? -1 : this._selectedIndices[this._selectedIndices.length-1];
-							}
-							else
-							{
-								if(this._selectedIndices.indexOf(_selectIndex.index) != -1) this._selectedIndices.splice( this._selectedIndices.indexOf(_selectIndex.index), 1 );
-								this._selectedIndices.push( _selectIndex.index );
-								this._selectedIndex = this._selectedIndices[this._selectedIndices.length-1];
-							}
+							this._selectedIndices.splice( this._selectedIndices.indexOf(_selectIndex.index), 1 );
+							this._selectedIndex = (this._selectedIndices.length == 0) ? -1 : this._selectedIndices[this._selectedIndices.length-1];
 						}
 						else
 						{
-							if(!selectLines.isSelected)
-							{
-								this._selectedIndices.pop();
-								this._selectedIndex = -1;
-							}
-							else
-							{
-								if(this._selectedIndices.length == 1) this._selectedIndices.pop();
-								this._selectedIndices.push( _selectIndex.index );
-								this._selectedIndex = this._selectedIndices[this._selectedIndices.length-1];
-							}
+							if(this._selectedIndices.indexOf(_selectIndex.index) != -1) this._selectedIndices.splice( this._selectedIndices.indexOf(_selectIndex.index), 1 );
+							this._selectedIndices.push( _selectIndex.index );
+							this._selectedIndex = this._selectedIndices[this._selectedIndices.length-1];
+						}
+					}
+					else
+					{
+						if(!selectLines.isSelected)
+						{
+							this._selectedIndices.pop();
+							this._selectedIndex = -1;
+						}
+						else
+						{
+							if(this._selectedIndices.length == 1) this._selectedIndices.pop();
+							this._selectedIndices.push( _selectIndex.index );
+							this._selectedIndex = this._selectedIndices[this._selectedIndices.length-1];
 						}
 					}
 				}
 			}
-		}
-		private function selectTouch(target:Object):Boolean
-		{
-			while (target != this.scrollContainer && target != stage)
-			{
-				target = target.parent;
-				
-			}
-			return target == this.scrollContainer;
 		}
 		private function selectTouchIndex(target:Object):Object
 		{

@@ -33,7 +33,7 @@ package feathers.extensions.dataGrid.themes
 		{
 			this.setTabStyles(toggleButton);
 			(toggleButton as DataGridToggleButton).toggleArrowBottom = this.atlas.getTexture("callout-arrow-bottom-skin0000"); 
-			(toggleButton as DataGridToggleButton).toggleArrowUp = this.atlas.getTexture("callout-arrow-top-skin0000"); ;
+			(toggleButton as DataGridToggleButton).toggleArrowUp = this.atlas.getTexture("callout-arrow-top-skin0000");
 		}
     }
 }
