@@ -447,16 +447,16 @@ package feathers.extensions.dataGrid
 			if(createHeader && this.header.visible)
 			{
 				var id:String;
-				for(var i:int = 0; i<itemRenderer.numChildren; i++)
+				for(var i:int = 0; i<itemRenderer._numChildren; i++)
 				{
 					if(!columns)
 					{
-						id = this._getChildAt(0).getChildAt(0).getChildAt(i).id;
+						id = this._getChildAt(0).getChildAt(0)._getChildAt(i).id;
 						(header.getChildAt(i) as DataGridToggleButton).label = id;
 					}
 					else if( !columns.getItemAt(0).hasOwnProperty("headerText") )
 					{
-						id = this._getChildAt(0).getChildAt(0).getChildAt(i).id;
+						id = this._getChildAt(0).getChildAt(0)._getChildAt(i).id;
 						(header.getChildAt(i) as DataGridToggleButton).label = id;
 					}
 					else
@@ -559,10 +559,10 @@ package feathers.extensions.dataGrid
 			for(var i:int = 0; i<this.numColons; i++) colons.push(0);
 			for(i = 0; i<this.scrollContainer.numChildren; i++)
 			{
-				var children:DisplayObjectContainer = this._getChildAt(i).getChildAt(0) as DisplayObjectContainer;
-				for(var j:int = 0; j<children.numChildren; j++)
+				var children:Object = this._getChildAt(i).getChildAt(0);
+				for(var j:int = 0; j<children._numChildren; j++)
 				{
-					if(children.getChildAt(j).width > colons[j]) colons[j] = children.getChildAt(j).width;
+					if(children._getChildAt(j).width > colons[j]) colons[j] = children._getChildAt(j).width;
 				}
 			}
 			var lineSize:Number;
@@ -576,7 +576,7 @@ package feathers.extensions.dataGrid
 				for(j = 0; j<this.numColons; j++)
 				{
 					lineSize = (j == 0 || j == numColons - 1) ? this.lineSize * 1.5 : this.lineSize;
-					this._getChildAt(i).getChildAt(0).getChildAt(j).width = colons[j];
+					this._getChildAt(i).getChildAt(0)._getChildAt(j).width = colons[j];
 				}
 				this._getChildAt(i).getChildAt(0).validate();
 			}
@@ -746,11 +746,11 @@ package feathers.extensions.dataGrid
 		{
 			if(!columns)
 			{
-				return this._getChildAt(0).getChildAt(0).getChildAt(columnIndex).id;
+				return this._getChildAt(0).getChildAt(0)._getChildAt(columnIndex).id;
 			}
 			else if( !columns.getItemAt(columnIndex).hasOwnProperty("dataField") )
 			{
-				return this._getChildAt(0).getChildAt(0).getChildAt(columnIndex).id;
+				return this._getChildAt(0).getChildAt(0)._getChildAt(columnIndex).id;
 			}
 			else
 			{

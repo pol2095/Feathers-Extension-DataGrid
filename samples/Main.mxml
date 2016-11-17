@@ -7,7 +7,7 @@
 		<f:VerticalLayout/>
 	</f:layout>
 	<f:Label id="label" text="label"/>
-	<components:DataGrid id="dataGrid" itemRenderer="{components.DataGridItemRenderer}" change="rowChangeHandler(event)" requestedRowCount="3">
+	<components:DataGrid id="dataGrid" itemRenderer="{components.CustomDataGridItemRenderer}" change="rowChangeHandler(event)" requestedRowCount="3">
 		<components:columns>
 			<f:ListCollection>
 				<fx:Object dataField="check" headerText="" type="numeric"/>
@@ -22,7 +22,7 @@
 	<fx:Script>
 		<![CDATA[
 			import feathers.data.ListCollection;
-			import components.DataGridItemRenderer;
+			import components.CustomDataGridItemRenderer;
 			import feathers.extensions.dataGrid.events.RowChangeEvent;
 			
 			private function creationCompleteHandler( event:Event ):void

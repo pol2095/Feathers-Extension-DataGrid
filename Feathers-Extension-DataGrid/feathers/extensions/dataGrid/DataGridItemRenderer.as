@@ -9,13 +9,14 @@ package feathers.extensions.dataGrid
 	import feathers.controls.LayoutGroup;
 	import starling.events.EnterFrameEvent;
 	import feathers.layout.HorizontalLayout;
+	import starling.display.Quad;
  
     /**
 	 * The row of a datagrid control.
 	 *
 	 * @see http://pol2095.free.fr/Feathers-Extension-DataGrid/ How to use DataGrid with mxml
 	 */
-	public class Row extends LayoutGroup
+	public class DataGridItemRenderer extends LayoutGroup
     {
 		/**
 		 * @private
@@ -59,9 +60,25 @@ package feathers.extensions.dataGrid
 			layout.gap = layout.paddingLeft = layout.paddingRight = layout.paddingTop = layout.paddingBottom = owner.lineSize;
 		}
 		
-		public function Row()
+		private var backGround:Quad;
+		
+		public function DataGridItemRenderer()
         {
 			super();
+			var layoutGroup:LayoutGroup = new LayoutGroup();
+			layoutGroup.includeInLayout = false;
+			backGround = new Quad(1, 1);
+			backGround.alpha = 0;
+			layoutGroup.addChild( backGround );
+			this.addChild( layoutGroup );
+        }
+		
+		override protected function draw():void
+        {
+			super.draw();
+			
+			backGround.width = this.width;
+			backGround.height = this.height;
         }
 		
 		/**
@@ -108,6 +125,20 @@ package feathers.extensions.dataGrid
 			isChanging = false;
 			this.removeEventListener(EnterFrameEvent.ENTER_FRAME, onDataGridChangeHandler);
 			countEnterFrame--;
+		}
+		/**
+		 * @private
+		 */
+		public function get _numChildren():int
+		{
+			return this.numChildren - 1;
+		}
+		/**
+		 * @private
+		 */
+		public function _getChildAt(index:int):Object
+		{
+			return this.getChildAt(index + 1);
 		}
 	}
 }
