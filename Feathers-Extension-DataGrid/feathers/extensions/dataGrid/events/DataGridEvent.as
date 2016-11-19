@@ -13,7 +13,7 @@ package feathers.extensions.dataGrid.events {
 	 * @see http://pol2095.free.fr/Feathers-Extension-DataGrid/ How to use DataGrid with mxml
 	 * @see feathers.extensions.dataGrid.DataGrid
 	 */
-	public class RowChangeEvent extends Event {
+	public class DataGridEvent extends Event {
 		
 		/**
 		 * Dispatched when a datagrid row changes.
@@ -22,7 +22,7 @@ package feathers.extensions.dataGrid.events {
 		
 		private var _index:int;
 
-		public function RowChangeEvent(type:String, index:int, bubbles:Boolean=false, cancelable:Boolean=false) {
+		public function DataGridEvent(type:String, index:int, bubbles:Boolean=false, cancelable:Boolean=false) {
 			super(type, bubbles, cancelable);
 			_index = index;
 		}

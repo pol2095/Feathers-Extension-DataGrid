@@ -23,7 +23,7 @@
 		<![CDATA[
 			import feathers.data.ListCollection;
 			import components.CustomDataGridItemRenderer;
-			import feathers.extensions.dataGrid.events.RowChangeEvent;
+			import feathers.extensions.dataGrid.events.DataGridEvent;
 			
 			private function creationCompleteHandler( event:Event ):void
 			{
@@ -40,7 +40,7 @@
 			{
 				dataGrid.dataProvider.removeItemAt(0);
 			}
-			private function rowChangeHandler(event:RowChangeEvent):void
+			private function rowChangeHandler(event:DataGridEvent):void
 			{
 				trace(event.index);
 			}

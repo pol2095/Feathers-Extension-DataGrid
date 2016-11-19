@@ -10,7 +10,7 @@ package feathers.extensions.dataGrid
 	import feathers.data.ListCollection;
 	import feathers.events.CollectionEventType;
 	import flash.utils.getDefinitionByName;
-	import feathers.extensions.dataGrid.events.RowChangeEvent;
+	import feathers.extensions.dataGrid.events.DataGridEvent;
 	import feathers.controls.LayoutGroup;
 	import feathers.layout.VerticalLayout;
 	import feathers.layout.HorizontalLayout;
@@ -27,7 +27,7 @@ package feathers.extensions.dataGrid
 	/**
 	 * Dispatched when a datagrid row changes.
 	 */
-	[Event(name="change", type="feathers.extensions.dataGrid.events.RowChangeEvent")]
+	[Event(name="change", type="feathers.extensions.dataGrid.events.DataGridEvent")]
 	
 	/**
 	 * The DataGrid displays a row of column headings above a scrollable grid. The grid is arranged as a collection of individual cells arranged in rows and columns. The DataGrid control is designed to support smooth scrolling through large numbers of rows and columns.
@@ -53,7 +53,7 @@ package feathers.extensions.dataGrid
 		
 		private var _defaultLineColor:uint = 0xCCCCCC;
 		/**
-		 * the default color of lines when a row is not selected.
+		 * The default color of lines when a row is not selected.
 		 *
 		 * @default 0xCCCCCC
 		 */
@@ -186,7 +186,7 @@ package feathers.extensions.dataGrid
 		 */
 		public function rowChange(index:int):void
 		{
-			dispatchEvent(new RowChangeEvent( RowChangeEvent.CHANGE, index ));
+			dispatchEvent(new DataGridEvent( DataGridEvent.CHANGE, index ));
 		}
 		
 		private var ItemRenderer:Class;

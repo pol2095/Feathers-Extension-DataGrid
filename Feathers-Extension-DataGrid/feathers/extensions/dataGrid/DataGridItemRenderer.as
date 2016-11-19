@@ -102,7 +102,7 @@ package feathers.extensions.dataGrid
 			}
 		}
 		/**
-		 * Allows to change the item datagrid dataProvider corresponding to this item renderer and dispatch a <code>RowChangeEvent</code> on the datagrid corresponding to this item renderer.
+		 * Allows to change the item datagrid dataProvider corresponding to this item renderer and dispatch a <code>DataGridEvent</code> on the datagrid corresponding to this item renderer.
 		 *
 		 * <listing version="3.0">
 		 * override protected function rowChangeHandler():void
@@ -114,7 +114,7 @@ package feathers.extensions.dataGrid
 		 *   super.rowChangeHandler(); //never forget to add this!
 		 * }</listing>
 		 *
-		 * @see feathers.extensions.dataGrid.events.RowChangeEvent
+		 * @see feathers.extensions.dataGrid.events.DataGridEvent
 		 */
 		protected function rowChangeHandler():void
         {
