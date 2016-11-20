@@ -7,7 +7,7 @@ The DataGrid displays a row of column headings above a scrollable grid. The grid
 ## Quick Links
 
 * [Website](http://pol2095.free.fr/Feathers-Extension-DataGrid/)
-* [API Reference](http://pol2095.free.fr/Feathers-Extension-DataGrid/docs/feathers/extensions/dataGrid/package-detail.html)
+* [API Reference](http://pol2095.free.fr/Starling-Feathers-Extensions/docs/feathers/extensions/dataGrid/package-detail.html)
 * [Discussion Forum](http://forum.starling-framework.org/forum/feathers)
 * [Github Project](https://github.com/pol2095/Feathers-Extension-DataGrid)
 

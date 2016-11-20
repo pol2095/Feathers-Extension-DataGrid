@@ -33,6 +33,7 @@ package feathers.extensions.dataGrid
 	 * The DataGrid displays a row of column headings above a scrollable grid. The grid is arranged as a collection of individual cells arranged in rows and columns. The DataGrid control is designed to support smooth scrolling through large numbers of rows and columns.
 	 *
 	 * @see http://pol2095.free.fr/Feathers-Extension-DataGrid/ How to use DataGrid with mxml
+	 * @see feathers.extensions.tree.DataGridItemRenderer
 	 */	
 	public class DataGrid extends LayoutGroup
 	{
