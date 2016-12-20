@@ -127,6 +127,7 @@ package feathers.extensions.dataGrid
 		
 		private function addedToStageHandler(event:Event):void
 		{
+			this.removeEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
 			this.scrollContainer.addEventListener(TouchEvent.TOUCH, onTouchEvent);
 		}
 		
@@ -825,6 +826,22 @@ package feathers.extensions.dataGrid
 		public function set hideHeader(value:Boolean):void
 		{
 			this.header.visible = !this.header.visible;
+		}
+		
+		/**
+		 * @private
+		 */
+		override public function dispose():void
+		{
+			//clearing selection now so that the data provider setter won't
+			//cause a selection change that triggers events.
+			this._selectedIndices = null;
+			this._selectedIndex = -1;
+			this.dataProvider = null;
+			this.layout = null;
+			this.scrollContainer.removeEventListener(TouchEvent.TOUCH, onTouchEvent);
+			for(var i:int = 0; i<this.header.numChildren; i++) header.getChildAt(i).removeEventListener( Event.TRIGGERED, toggleButton_triggeredHandler );
+			super.dispose();
 		}
 	}
 }
