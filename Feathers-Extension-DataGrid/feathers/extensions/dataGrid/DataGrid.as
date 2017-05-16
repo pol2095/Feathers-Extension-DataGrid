@@ -1,5 +1,5 @@
 /*
-Copyright 2016 pol2095. All Rights Reserved.
+Copyright 2017 pol2095. All Rights Reserved.
 
 This program is free software. You can redistribute and/or modify it in
 accordance with the terms of the accompanying license agreement.
@@ -411,13 +411,19 @@ package feathers.extensions.dataGrid
 		}
 		private function addItem(index:int):void
 		{
+			var i:int;
 			var createHeader:Boolean;
+			var itemRenderer:Object = new ItemRenderer();
+			
 			if(index == 0 && numColons == 0)
 			{
+				(itemRenderer as LayoutGroup).validate();
+				numColons = (itemRenderer as DisplayObjectContainer).numChildren - 1;
 				var item:Object = this.dataProvider.getItemAt(index);
-				for (var key:String in item)
+				//for(var key:String in item)
+				for(i = 0; i<numColons; i++)
 				{
-					numColons++;
+					//numColons++;
 					if(this.header.visible)
 					{
 						var button:DataGridToggleButton = new DataGridToggleButton();
@@ -432,7 +438,7 @@ package feathers.extensions.dataGrid
 			}
 			
 			var layoutGroup:LayoutGroup = new LayoutGroup();
-			var itemRenderer:Object = new ItemRenderer();
+			//var itemRenderer:Object = new ItemRenderer();
 			itemRenderer.owner = this;
 			layoutGroup.addChild( itemRenderer as DisplayObjectContainer );
 			
@@ -449,7 +455,7 @@ package feathers.extensions.dataGrid
 			if(createHeader && this.header.visible)
 			{
 				var id:String;
-				for(var i:int = 0; i<itemRenderer._numChildren; i++)
+				for(i = 0; i<itemRenderer._numChildren; i++)
 				{
 					if(!columns)
 					{
