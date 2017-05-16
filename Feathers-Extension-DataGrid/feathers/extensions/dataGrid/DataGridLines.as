@@ -92,9 +92,9 @@ package feathers.extensions.dataGrid
 			{
 				if(this.getChildAt(i).name != "border") this.removeChild( this.getChildAt(i) );
 			}
-			lineInters = new Vector.<Quad>();
+			lineInters = new <Quad>[ null ];
 			
-			for(i = 0; i < this.itemRenderer.numChildren - 1; i++)
+			for(i = 1; i < this.itemRenderer.numChildren - 1; i++)
 			{
 				var _height:Number = (index == owner.scrollContainer.numChildren - 1) ? lineSize * 2 : lineSize;
 				lineInters.push( new Quad(lineSize, this.itemRenderer.height - _height, defaultLineColor) );
