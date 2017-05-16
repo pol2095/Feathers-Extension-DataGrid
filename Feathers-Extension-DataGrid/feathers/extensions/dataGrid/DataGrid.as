@@ -649,10 +649,15 @@ package feathers.extensions.dataGrid
 						{
 							actualLines.isSelected = actualLines.itemRenderer.isSelected = false;
 							actualLines.selectedLines();
+							selectLines.isSelected = selectLines.itemRenderer.isSelected = true;
+							selectLines.selectedLines();
 						}
 					}
-					selectLines.isSelected = selectLines.itemRenderer.isSelected = !selectLines.isSelected;
-					selectLines.selectedLines();
+					else
+					{
+						selectLines.isSelected = selectLines.itemRenderer.isSelected = !selectLines.isSelected;
+						selectLines.selectedLines();
+					}
 					if(this.allowMultipleSelection)
 					{
 						if(!selectLines.isSelected)
