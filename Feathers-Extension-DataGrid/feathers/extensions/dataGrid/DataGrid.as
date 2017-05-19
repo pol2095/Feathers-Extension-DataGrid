@@ -626,6 +626,7 @@ package feathers.extensions.dataGrid
 			if(!touch) return;
 			if (touch.phase == TouchPhase.BEGAN) {
 				var target:Object = touch.target as Object;
+				if(!target || target === this.scrollContainer) return;
 				var _selectIndex:Object = selectTouchIndex(target);
 				if(_selectIndex.hasOwnProperty("index"))
 				{
