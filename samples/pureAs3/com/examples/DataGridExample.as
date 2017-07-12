@@ -5,6 +5,8 @@ package com.examples
 	import feathers.controls.LayoutGroup;
 	import feathers.extensions.dataGrid.themes.DataGridMetalWorksDesktopTheme;
 	import feathers.data.ListCollection;
+	import feathers.extensions.dataGrid.events.DataGridEvent;
+	import starling.events.Event;
 	
 	public class DataGridExample extends LayoutGroup
 	{
@@ -14,6 +16,7 @@ package com.examples
 			super();
 			
 			var dataGrid:DataGrid = new DataGrid();
+			dataGrid.addEventListener( Event.CHANGE, rowChangeHandler );
 			dataGrid.columns = new ListCollection(
 			[
 			{ dataField: "check", headerText: "" },
@@ -31,6 +34,11 @@ package com.examples
 			]);
 			dataGrid.requestedRowCount = 3;
 			this.addChild(dataGrid);
+		}
+		
+		private function rowChangeHandler(event:DataGridEvent):void
+		{
+			trace(event.index);
 		}
 	}
 }
