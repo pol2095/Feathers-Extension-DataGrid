@@ -19,10 +19,10 @@ package com.examples
 			dataGrid.addEventListener( Event.CHANGE, rowChangeHandler );
 			dataGrid.columns = new ListCollection(
 			[
-			{ dataField: "check", headerText: "" },
-			{ dataField: "comment", headerText: "comment"  },
-			{ dataField: "mail", headerText: "mail"  },
-			{ dataField: "adress", headerText: "adress"  }
+			{ dataField: "check", headerText: "", type:"numeric" },
+			{ dataField: "comment", headerText: "Comment"  },
+			{ dataField: "label", headerText: "Mail"  },
+			{ dataField: "label2", headerText: "Adress"  }
 			]);
 			dataGrid.itemRenderer = components.CustomDataGridItemRenderer;
 			dataGrid.dataProvider = new ListCollection(
