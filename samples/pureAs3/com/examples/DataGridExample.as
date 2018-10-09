@@ -3,7 +3,7 @@ package com.examples
 	import components.CustomDataGridItemRenderer;
 	import feathers.extensions.dataGrid.DataGrid;
 	import feathers.controls.LayoutGroup;
-	import feathers.extensions.dataGrid.themes.DataGridMetalWorksDesktopTheme;
+	import feathers.extensions.themes.MetalWorksDesktopTheme;
 	import feathers.data.ListCollection;
 	import feathers.extensions.dataGrid.events.DataGridEvent;
 	import starling.events.Event;
