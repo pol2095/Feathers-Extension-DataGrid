@@ -9,11 +9,21 @@ package feathers.extensions.dataGrid
 	import starling.textures.Texture;
 	import feathers.controls.ToggleButton;
 	import feathers.layout.RelativePosition;
+	import feathers.skins.IStyleProvider;
 	import starling.display.Image;
 	
     public class DataGridToggleButton extends ToggleButton
     {
-        public var owner:DataGrid;
+        /**
+		 * The default <code>IStyleProvider</code> for all <code>BorderContainer</code>
+		 * components.
+		 *
+		 * @default null
+		 * @see feathers.core.FeathersControl#styleProvider
+		 */
+		public static var globalStyleProvider:IStyleProvider;
+		
+		public var owner:DataGrid;
 		public var isArrowDown:Boolean;
 		public var isFirst:Boolean = true;
 		public var toggleArrowBottom:Texture;
@@ -34,5 +44,13 @@ package feathers.extensions.dataGrid
 				if(this.label != "") this.iconPosition = RelativePosition.RIGHT;
 			}
         }
+		
+		/**
+		 * @private
+		 */
+		override protected function get defaultStyleProvider():IStyleProvider
+		{
+			return DataGridToggleButton.globalStyleProvider;
+		}
     }
 }
