@@ -10,6 +10,7 @@ package feathers.extensions.dataGrid
 	import feathers.data.ListCollection;
 	import feathers.events.CollectionEventType;
 	import flash.utils.getDefinitionByName;
+	import feathers.extensions.borderContainer.BorderContainer;
 	import feathers.extensions.dataGrid.events.DataGridEvent;
 	import feathers.controls.LayoutGroup;
 	import feathers.layout.VerticalLayout;
@@ -21,6 +22,7 @@ package feathers.extensions.dataGrid
 	import starling.events.TouchEvent;
 	import starling.events.Touch;
 	import starling.events.TouchPhase;
+	import starling.display.DisplayObject;
 	import starling.display.Quad;
 	import flash.geom.Point;
 	
@@ -35,7 +37,7 @@ package feathers.extensions.dataGrid
 	 * @see http://pol2095.free.fr/Feathers-Extension-DataGrid/ How to use DataGrid with mxml
 	 * @see feathers.extensions.tree.DataGridItemRenderer
 	 */	
-	public class DataGrid extends LayoutGroup
+	public class DataGrid extends BorderContainer
 	{
 		private var _lineSize:Number = 2;
 		/**
@@ -96,10 +98,17 @@ package feathers.extensions.dataGrid
 		public function set requestedRowCount(value:int):void
 		{
 			this._requestedRowCount = value;
+			this.invalidate(INVALIDATION_FLAG_LAYOUT);
 		}
 		
-		private var headerHeight:Number = 0;
-		private var itemRendererHeight:Number;
+		/**
+		 * @private
+		 */
+		public var headerHeight:Number = 0;
+		/**
+		 * @private
+		 */
+		public var itemRendererHeight:Number;
 		
 		/**
 		 * <p>The list of GridColumn objects displayed by this grid. Each column selects different data provider item properties to display.</p>
@@ -113,11 +122,28 @@ package feathers.extensions.dataGrid
 		 */
 		public var columns:ListCollection;
 		
+		private var _height:Number = NaN;
+		
+		/**
+		 * @private
+		 */
+		override public function set height(value:Number):void
+		{
+			super.height = _height = value;
+		}
+		
 		public function DataGrid()
 		{
 			super();
 			
-			if(!this.layout) this.layout = new VerticalLayout();
+			if( ! this.layout )
+			{
+				this.layout = new VerticalLayout();
+				/*(this.layout as VerticalLayout).paddingTop = 3;
+				(this.layout as VerticalLayout).paddingBottom = 3;
+				(this.layout as VerticalLayout).paddingLeft = 5;
+				(this.layout as VerticalLayout).paddingRight = 5;*/
+			}
 			this.addEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
 			header.layout = new HorizontalLayout();
 			this.addChild(header);
@@ -132,6 +158,15 @@ package feathers.extensions.dataGrid
 		}
 		
 		/**
+		 * @private
+		 */
+		override public function set backgroundSkin(value:DisplayObject):void
+		{
+			value.alpha = 0.1;
+			super.backgroundSkin = value;
+		}
+		
+		/**
 		 * The header of the datagrid.
 		 */		
 		public var header:LayoutGroup = new LayoutGroup();
@@ -139,12 +174,17 @@ package feathers.extensions.dataGrid
 		 * @private 
 		 */	
 		public var scrollContainer:ScrollContainer = new ScrollContainer();
-			
-		private function requestedRowCountDefault():void
+		
+		/**
+		 * @private 
+		 */
+		public function requestedRowCountDefault():void
 		{
 			if(headerHeight == 0 && this.header.visible)
 			{
 				var button:DataGridToggleButton = new DataGridToggleButton();
+				button.label = "button";
+				button.styleNameList.add("toggleButton-arrow");
 				button.validate();
 				headerHeight = button.height;
 				button = null;
@@ -168,7 +208,7 @@ package feathers.extensions.dataGrid
 			if(this.scrollContainer.viewPort.height > this.scrollContainer.height)
 			{
 				var item:Object = this.getItemAt(index);
-				if(item.height > this.scrollContainer.height) //tab width > scroller width
+				if(item.height > this.scrollContainer.height) //tab height > scroller height
 				{
 					this.scrollContainer.verticalScrollPosition = item.parent.y; //tab begin
 				}
@@ -178,7 +218,7 @@ package feathers.extensions.dataGrid
 				}
 				else if(item.parent.y + item.height > this.scrollContainer.verticalScrollPosition + this.scrollContainer.height) //tab end > scroller end
 				{
-					this.scrollContainer.verticalScrollPosition = item.parent.y + item.height - this.scrollContainer.height; //tab end - scroller width
+					this.scrollContainer.verticalScrollPosition = item.parent.y + item.height - this.scrollContainer.height; //tab end - scroller height
 				}
 			}
 		}
@@ -590,9 +630,9 @@ package feathers.extensions.dataGrid
 			}
 			if(this.numColons > 0)
 			{
-				if( !isNaN(this.height) )
+				if( ! isNaN(this._height) )
 				{
-					this.scrollContainer.height = this.height - this.header.height;
+					this.scrollContainer.height = this._height - this.header.height;
 				}
 				else if(requestedRowCount == -1)
 				{
