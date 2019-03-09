@@ -208,7 +208,8 @@ package feathers.extensions.dataGrid
 			if(this.scrollContainer.viewPort.height > this.scrollContainer.height)
 			{
 				var item:Object = this.getItemAt(index);
-				if(item.height > this.scrollContainer.height) //tab height > scroller height
+				var itemHeight:Number = index != this.dataProvider.length - 1 ? item.height + lineSize : item.height;
+				if(itemHeight > this.scrollContainer.height) //tab height > scroller height
 				{
 					this.scrollContainer.verticalScrollPosition = item.parent.y; //tab begin
 				}
@@ -216,9 +217,9 @@ package feathers.extensions.dataGrid
 				{
 					this.scrollContainer.verticalScrollPosition = item.parent.y; //tab begin
 				}
-				else if(item.parent.y + item.height > this.scrollContainer.verticalScrollPosition + this.scrollContainer.height) //tab end > scroller end
+				else if(item.parent.y + itemHeight > this.scrollContainer.verticalScrollPosition + this.scrollContainer.height) //tab end > scroller end
 				{
-					this.scrollContainer.verticalScrollPosition = item.parent.y + item.height - this.scrollContainer.height; //tab end - scroller height
+					this.scrollContainer.verticalScrollPosition = item.parent.y + itemHeight - this.scrollContainer.height; //tab end - scroller height
 				}
 			}
 		}
